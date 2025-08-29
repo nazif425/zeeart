@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZeeArt Portfolio</title>
+  <style>
+    :root {
+      --bg: #f9f9f9;
+      --text: #333;
+      --accent: #0077ff;
+      --card-bg: #fff;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1e;
+        --text: #eee;
+        --card-bg: #2c2c2c;
+        --shadow: rgba(0,0,0,0.6);
+      }
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    nav {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    nav button {
+      background: none;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      margin: 0 .25rem;
+      padding: .5rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    nav button.active,
+    nav button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .card {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px var(--shadow);
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    .card:hover { transform: translateY(-4px); }
+    .card svg {
+      width: 100%;
+      height: 150px;
+      display: block;
+    }
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox-content {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 1rem;
+      max-width: 90%;
+      max-height: 90%;
+    }
+    .lightbox svg {
+      width: 100%;
+      height: auto;
+    }
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: .9rem;
+      opacity: .7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ZeeArt Portfolio</h1>
+    <p>Creative works in nature and object themes</p>
+  </header>
+  <nav>
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="nature">Nature</button>
+    <button class="filter-btn" data-filter="objects">Objects</button>
+  </nav>
+  <section class="grid">
+    <article class="card" data-category="nature" data-title="Tree">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="40" r="20" fill="green" />
+        <rect x="45" y="60" width="10" height="25" fill="sienna" />
+      </svg>
+      <h3>Tree</h3>
+    </article>
+    <article class="card" data-category="nature" data-title="Sun">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="20" fill="gold" />
+      </svg>
+      <h3>Sun</h3>
+    </article>
+    <article class="card" data-category="objects" data-title="Cup">
+      <svg viewBox="0 0 100 100">
+        <rect x="30" y="40" width="40" height="30" fill="lightblue" stroke="black" />
+        <rect x="65" y="45" width="10" height="20" fill="lightblue" stroke="black" />
+      </svg>
+      <h3>Cup</h3>
+    </article>
+  </section>
+
+  <div class="lightbox" id="lightbox">
+    <button class="close-btn" id="closeBtn">&times;</button>
+    <div class="lightbox-content" id="lightboxContent"></div>
+  </div>
+
+  <footer>
+    &copy; 2025 ZeeArt
+  </footer>
+
+  <script>
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.card');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxContent = document.getElementById('lightboxContent');
+    const closeBtn = document.getElementById('closeBtn');
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        cards.forEach(card => {
+          card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+        });
+      });
+    });
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const clone = card.querySelector('svg').cloneNode(true);
+        lightboxContent.innerHTML = '';
+        lightboxContent.appendChild(clone);
+        lightbox.classList.add('active');
+      });
+    });
+
+    closeBtn.addEventListener('click', () => lightbox.classList.remove('active'));
+
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') lightbox.classList.remove('active');
+    });
+  </script>
+</body>
+</html>
